@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        margin: 30px;
+        text-align: center;
+    }
+
+    div {
+        font-size: 28px;
+    }
+</style>
+
+<body>
+    <button class="btn btn-default">Fetch User</button>
+    <hr>
+    <div></div>
+    <script>
+        const button = document.querySelector("button");
+        const div = document.querySelector("div");
+
+        const setText = (text) => {
+            div.textContent = text
+        }
+
+        const checkAuth = () => {
+            return Rx.Observable.create(observer => {
+                setText('Checking Auth...')
+                setTimeout(() => {
+                    observer.next(true);
+                }, 2000);
+            })
+        };
+
+        const fetchUser = () => {
+            return Rx.Observable.create(observer => {
+                setText('Fetching User...')
+                setTimeout(() => {
+                    observer.next({ name: 'Max' });
+                }, 2000);
+            })
+        };
+
+        Rx.Observable.fromEvent(button, 'click')
+            .switchMap(event => checkAuth())
+            .switchMap(isAuth => {
+                if (isAuth) {
+                    return fetchUser()
+                }
+            })
+            .subscribe(user => {
+                setText(user.name)
+            })
+
+    </script>
+</body>
+
+</html>
